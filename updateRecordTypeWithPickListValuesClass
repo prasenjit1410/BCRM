@@ -1,0 +1,84 @@
+public class updateRecordTypeWithPickListValuesClass {
+    /*
+      	Script here: run from anonymous block
+    
+        String sobj = 'Account';
+        String picklistToUpdate = 'Booked_Date_type__c';
+        String[] developmentNameSet = new String[]{ 'Rejected' };
+        String fullname = 'Account.Booked_Date_type__c';
+        updateRecordTypeWithPickListValuesClass.updateRecordTypeWithPickListValues( sobj, picklistToUpdate, developmentNameSet, fullname );
+
+     
+     */
+    
+	public static void updateRecordTypeWithPickListValues(String leadObj, String picklistToUpdate, list<String> developmentNameSet, String fullname){
+        // fullname =: 'Account.Booked_Date_type__c'
+        set<String> existingPicklistValuesForLead = new set<String>();       
+        existingPicklistValuesForLead = fetchExistingPickListValue( leadObj, picklistToUpdate );        
+        
+        MetadataService.MetadataPort service = new MetadataService.MetadataPort();
+        service.SessionHeader = new MetadataService.SessionHeader_element();
+        service.SessionHeader.sessionId = UserInfo.getSessionId();        
+		
+		// picklist in CustomField is deprecated
+		
+		List<MetadataService.PickListValue> pickVals = new List<MetadataService.PickListValue>();
+		MetadataService.PickListValue newPickVal ;
+
+        // get your list of record types either through a query or a describe call and put them into a list  
+		String[] recordTypeNames = new String[] {'Account.HDFC_Loan_Details', 'Account.ICICI_loan_details' }; 		
+
+		// Get the record type from the API
+		MetadataService.Metadata[] mdRecordTypes = service.readMetadata( 'RecordType', recordTypeNames ).getRecords();
+		MetadataService.RecordType[] recordTypes = (MetadataService.RecordType[]) mdRecordTypes;
+
+		// initialize the list of record type picklist values
+		MetadataService.RecordTypePicklistValue[] rtPickValues = new MetadataService.RecordTypePicklistValue[]{};
+		MetadataService.RecordTypePicklistValue rtPickValue = new MetadataService.RecordTypePicklistValue();
+       
+        for( String str : developmentNameSet ){			
+			newPickVal = new MetadataService.PickListValue();
+			newPickVal.fullName = str;
+			newPickVal.default_x = false;
+			pickVals.add(newPickVal);	
+		
+        }
+		
+		// Create the recordtypepicklist and add it to the list of picklist fields for the record type
+		rtPickValue.picklist = picklistToUpdate;
+		rtPickValue.values = pickVals;
+		rtPickValues.add(rtPickValue);
+        
+		// loop through the record types and set the picklist values
+		for(MetadataService.RecordType RT : recordTypes){
+			RT.picklistValues.addAll( rtPickValues ) ;
+		}
+
+		// Update the record type
+		service.updateMetadata( mdRecordTypes ) ;
+			
+        
+    }
+    
+    public static set<String> fetchExistingPickListValue(String Obj, String picklistToUpdate){
+        SobjectType objType   = Schema.getGlobalDescribe().get(Obj);
+        system.debug('objType ' +objType);
+        Map<String,Schema.SObjectField> objFields = objType.getDescribe().fields.getMap();
+        SObjectField fieldName = objFields.get(picklistToUpdate);
+        system.debug('fieldName-------'+fieldName);
+        
+        Schema.DescribeFieldResult fieldResult = fieldName.getDescribe();
+        fieldResult = fieldResult.getSObjectField().getDescribe();
+        system.debug('fieldResult-------'+fieldResult); 
+        
+        List<Schema.PicklistEntry> ple = fieldResult.getPicklistValues();
+        system.debug('ple------'+ple);
+        set<String> existingPicklistValues = new set<String>();
+        for( Schema.PicklistEntry pickListVal : ple){
+            existingPicklistValues.add(pickListVal.getValue());
+            system.debug('-label-'+pickListVal.getLabel());
+        } 
+        return existingPicklistValues;
+    }  
+    
+}
