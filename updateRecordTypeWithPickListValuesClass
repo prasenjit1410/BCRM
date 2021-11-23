@@ -59,26 +59,6 @@ public class updateRecordTypeWithPickListValuesClass {
 			
         
     }
-    
-    public static set<String> fetchExistingPickListValue(String Obj, String picklistToUpdate){
-        SobjectType objType   = Schema.getGlobalDescribe().get(Obj);
-        system.debug('objType ' +objType);
-        Map<String,Schema.SObjectField> objFields = objType.getDescribe().fields.getMap();
-        SObjectField fieldName = objFields.get(picklistToUpdate);
-        system.debug('fieldName-------'+fieldName);
-        
-        Schema.DescribeFieldResult fieldResult = fieldName.getDescribe();
-        fieldResult = fieldResult.getSObjectField().getDescribe();
-        system.debug('fieldResult-------'+fieldResult); 
-        
-        List<Schema.PicklistEntry> ple = fieldResult.getPicklistValues();
-        system.debug('ple------'+ple);
-        set<String> existingPicklistValues = new set<String>();
-        for( Schema.PicklistEntry pickListVal : ple){
-            existingPicklistValues.add(pickListVal.getValue());
-            system.debug('-label-'+pickListVal.getLabel());
-        } 
-        return existingPicklistValues;
-    }  
+
     
 }
