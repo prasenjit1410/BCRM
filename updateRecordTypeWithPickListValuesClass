@@ -13,8 +13,7 @@ public class updateRecordTypeWithPickListValuesClass {
     
 	public static void updateRecordTypeWithPickListValues(String leadObj, String picklistToUpdate, list<String> developmentNameSet, String fullname){
         // fullname =: 'Account.Booked_Date_type__c'
-        set<String> existingPicklistValuesForLead = new set<String>();       
-        existingPicklistValuesForLead = fetchExistingPickListValue( leadObj, picklistToUpdate );        
+         
         
         MetadataService.MetadataPort service = new MetadataService.MetadataPort();
         service.SessionHeader = new MetadataService.SessionHeader_element();
