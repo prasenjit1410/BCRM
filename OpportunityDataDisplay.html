@@ -1,0 +1,22 @@
+<template>
+
+<lightning-card>
+    <div class="slds-m-around_medium" style="border: 2px solid;height: 500px;">
+        <template if:false={dataLoaded}>
+           <lightning-spinner alternative-text="Loading..." size="large"></lightning-spinner>
+        </template>
+               <template if:true={dataLoaded}>
+                   <lightning-datatable 
+                       key-field="Id"
+                       data={data}
+                       columns={columns}
+                       onrowselection={getSelectedName}>
+                   </lightning-datatable>
+               </template>
+               <template if:true={error}>
+                   {error}
+               </template>
+           </div> 
+</lightning-card>
+
+</template>
