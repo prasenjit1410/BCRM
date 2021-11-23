@@ -1,7 +1,7 @@
 import { wire,track,api,LightningElement } from 'lwc';
 import { subscribe, unsubscribe, onError, setDebugFlag, isEmpEnabled } from 'lightning/empApi';
 import { getRecord, getRecordNotifyChange } from 'lightning/uiRecordApi';
-import fetchopportunities from '@salesforce/apex/RecurrencePatternPoCDataTableClass.listOppLwc';
+import fetchopportunities from '@salesforce/apex/RetrieveListOfOpportunity.listOppLwc';
 import pubsub from 'c/pubsub';
 import { NavigationMixin } from 'lightning/navigation';
 
