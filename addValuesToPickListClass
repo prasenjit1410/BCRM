@@ -1,0 +1,57 @@
+public class addValuesToPickListClass {
+    /*
+      	Script here: run from anonymous block
+    
+        String sobj = 'Account';
+        String picklistToUpdate = 'Booked_Date_type__c';
+        String[] developmentNameSet = new String[]{ 'Rejected' };
+        String fullname = 'Account.Booked_Date_type__c';
+        addValuesToPickListClass.addValuesToPickList( sobj, picklistToUpdate, developmentNameSet, fullname );
+
+     
+     */    
+    public static void addValuesToPickList(String leadObj, String picklistToUpdate, list<String> developmentNameSet, String fullname){
+        // fullname =: 'Account.Booked_Date_type__c'     
+        
+        MetadataService.MetadataPort service = new MetadataService.MetadataPort();
+        service.SessionHeader = new MetadataService.SessionHeader_element();
+        service.SessionHeader.sessionId = UserInfo.getSessionId();
+        MetadataService.CustomField picklistField =(MetadataService.CustomField) service.readMetadata('CustomField', new String[] { fullname } ).getRecords() [0];
+		
+        metadataservice.CustomValue two ;
+       
+        for( String str : developmentNameSet ){
+            two = new metadataservice.CustomValue();
+            two.fullName= str;
+            two.default_x=false;  
+            
+            picklistField.valueSet.valueSetDefinition.value.add(two);		
+		
+        }        
+        
+        MetadataService.SaveResult result = service.updateMetadata( new MetadataService.Metadata[] { picklistField })[0];		
+        
+    }
+    
+    public static set<String> fetchExistingPickListValue(String Obj, String picklistToUpdate){
+        SobjectType objType   = Schema.getGlobalDescribe().get(Obj);
+        system.debug('objType ' +objType);
+        Map<String,Schema.SObjectField> objFields = objType.getDescribe().fields.getMap();
+        SObjectField fieldName = objFields.get(picklistToUpdate);
+        system.debug('fieldName-------'+fieldName);
+        
+        Schema.DescribeFieldResult fieldResult = fieldName.getDescribe();
+        fieldResult = fieldResult.getSObjectField().getDescribe();
+        system.debug('fieldResult-------'+fieldResult); 
+        
+        List<Schema.PicklistEntry> ple = fieldResult.getPicklistValues();
+        system.debug('ple------'+ple);
+        set<String> existingPicklistValues = new set<String>();
+        for( Schema.PicklistEntry pickListVal : ple){
+            existingPicklistValues.add(pickListVal.getValue());
+            system.debug('-label-'+pickListVal.getLabel());
+        } 
+        return existingPicklistValues;
+    }  
+    
+}
