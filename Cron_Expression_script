@@ -1,0 +1,12 @@
+String cronExpression =  sysTime.second() + ' ' + sysTime.minute() + ' ' + 
+                sysTime.hour() + ' ' + sysTime.day() + ' ' + sysTime.month() + ' ? ' ;
+Datetime sysTime = System.now();
+String hour = String.valueOf(Datetime.now().hour());
+String min = String.valueOf(Datetime.now().minute() + 1 ); 
+String ss = String.valueOf(Datetime.now().second() );
+
+//parse to cron expression
+String nextFireTime = ss + ' ' + min + ' ' + hour + sysTime.day() + ' '+ sysTime.month() + ' ? ' + sysTime.Year();
+
+scheduledMerge s = new scheduledMerge(); 
+System.schedule('Job Started At ' + String.valueOf(Datetime.now()), nextFireTime, s);
