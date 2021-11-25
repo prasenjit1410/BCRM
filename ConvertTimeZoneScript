@@ -1,4 +1,19 @@
-String startdatetime ;
+/*
+If current Datetime is 2021 25 11 9.43PM
+then expected output in debug log should be 20211125T144300Z
+but the Actual value I was getting 20211125T094300Z
+Because If we convert Datetime to String
+it convert GMT to Actual value again
+So to overcome this default behaviour, to bypass this challenge
+we used JSON.serialize()
+*/
+	
+	
+	
+	
+	
+	
+	String startdatetime ;
         String enddatetime;
         
 		Datetime strtDateTimeValue = System.now();
