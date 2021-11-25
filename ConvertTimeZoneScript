@@ -1,0 +1,27 @@
+String startdatetime ;
+        String enddatetime;
+        
+		Datetime strtDateTimeValue = System.now();
+		Datetime endDateTimeValue = System.now().addDays( 2) ;
+        
+        Date stDate = Date.newInstance( strtDateTimeValue.year(), strtDateTimeValue.month(), strtDateTimeValue.day() );
+        Time stTime = Time.newInstance( strtDateTimeValue.hour(), strtDateTimeValue.minute(), strtDateTimeValue.second(), 0 );
+        DateTime stobjDT = DateTime.newInstance( stDate, stTime );
+        
+        String serializeedStartDate =  JSON.serialize(stobjDT) ;
+        serializeedStartDate = serializeedStartDate.replace('"','') ;
+        String[] stFdate = serializeedStartDate.split( 'T' ); // Example: 2021-11-25T13:26:22.840Z
+        String[] stDateonly = stFdate[0].split( '-' );
+        String[] stTimeStamp = stFdate[1].replace( '.000Z', '').split( ':' );
+        startdatetime = stDateonly[0]+ stDateonly[1]  + stDateonly[2] + 'T' + stTimeStamp[0] + stTimeStamp[1] + stTimeStamp[2] + 'Z' ;
+        
+        
+        Date edDate = Date.newInstance( endDateTimeValue.year(), endDateTimeValue.month(), endDateTimeValue.day() );
+        Time edTime = Time.newInstance( endDateTimeValue.hour(), endDateTimeValue.minute(), endDateTimeValue.second(), 0 );
+        DateTime edobjDT = DateTime.newInstance( edDate, edTime );
+        String serializeedDate =  JSON.serialize(edobjDT) ;
+        serializeedDate = serializeedDate.replace('"','') ;
+        String[] edFdate = serializeedDate.split( 'T' ); // Example: 2021-11-25T13:26:22.840Z
+        String[] edDateonly = edFdate[0].split( '-' );
+        String[] edTimeStamp = edFdate[1].replace( '.000Z', '').split( ':' );
+        enddatetime = edDateonly[0]+ edDateonly[1]  + edDateonly[2] + 'T' + edTimeStamp[0] + edTimeStamp[1] + edTimeStamp[2] + 'Z' ;
