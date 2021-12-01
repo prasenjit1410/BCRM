@@ -1,0 +1,4 @@
+let newobjlist = {...oldobjlist};
+console.log( oldobjlist );
+
+console.log( newobjlist );
