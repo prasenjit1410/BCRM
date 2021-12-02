@@ -32,6 +32,65 @@ export default class AccountDatas extends LightningElement {
      }
 }
 
+// Scenario 2: so here the new uniqueid properties added to the accresult, but not modifying the result variable, which is correct
+
+export default class AccountDatas extends LightningElement {
+    displayMessahe = true ;
+    richTextMessage = '<h2> Welcome, currently Account datas not displaying on the screen, ' + 
+     'but in console log, you can find all data, this page is built for a research purpose </h2>';
+
+     connectedCallback(){
+        getAccountdatas()
+        .then( (result)=>{
+            console.log( 'response is ' , result );
+
+            let accresult = result.map( item=>{
+                let eachobj = {...item};
+                eachobj.uniqueid = 'accoubt-id-1';
+
+                console.log( 'eachobj is ', eachobj );
+                return eachobj ;
+            });
+
+            console.log( 'result is ', result );
+            console.log( 'account result is ', accresult );
+        })
+        .catch( (error)=>{
+            console.log( 'Error is====>' , error );
+        })
+
+     }
+}
+// Scenario 3: so here the new uniqueid properties added to the accresult, but not modifying the result variable, which is correct
+
+export default class AccountDatas extends LightningElement {
+    displayMessahe = true ;
+    richTextMessage = '<h2> Welcome, currently Account datas not displaying on the screen, ' + 
+     'but in console log, you can find all data, this page is built for a research purpose </h2>';
+
+     connectedCallback(){
+        getAccountdatas()
+        .then( (result)=>{
+            console.log( 'response is ' , result );
+
+            let accresult = result.map( item=>{
+                let eachobj = Object.assign( {}, item );
+                eachobj.uniqueid = 'accoubt-id-1';
+
+                console.log( 'eachobj is ', eachobj );
+                return eachobj ;
+            });
+
+            console.log( 'result is ', result );
+            console.log( 'account result is ', accresult );
+        })
+        .catch( (error)=>{
+            console.log( 'Error is====>' , error );
+        })
+
+     }
+}
+
 
 
 let newobjlist = {...oldobjlist};
