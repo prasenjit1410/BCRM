@@ -1,5 +1,6 @@
 /*
-  This First example (Scenario 1 ) depicts the how using filter method does not help to keep untouch the original array, if any modification done on the outcome/result
+  This First example (Scenario 1 ) depicts that how using map on result is not enough if we want to keep original result as it is and want to get a new modifed result, 
+  if any modification done on the outcome/result
 */
 
 import { LightningElement, track, api, wire } from 'lwc';
@@ -16,8 +17,8 @@ export default class AccountDatas extends LightningElement {
         .then( (result)=>{
             console.log( 'response is ' , result );
 
-            let accresult = result.filter( item=>{
-                let eachobj = item;
+            let accresult = result.map( item=>{
+                let eachobj = item; // Assigning item to eachobj
                 eachobj.uniqueid = 'accoubt-id-1';
                 return eachobj ;
             });
@@ -33,6 +34,7 @@ export default class AccountDatas extends LightningElement {
 }
 
 // Scenario 2: so here the new uniqueid properties added to the accresult, but not modifying the result variable, which is correct
+// use of spread operator
 
 export default class AccountDatas extends LightningElement {
     displayMessahe = true ;
@@ -47,13 +49,11 @@ export default class AccountDatas extends LightningElement {
             let accresult = result.map( item=>{
                 let eachobj = {...item};
                 eachobj.uniqueid = 'accoubt-id-1';
-
-                console.log( 'eachobj is ', eachobj );
                 return eachobj ;
             });
 
-            console.log( 'result is ', result );
-            console.log( 'account result is ', accresult );
+            console.log( 'result is ', result ); //  {Id: '0010I00001p579fQAA', Type1__c: 'SA55', Type2__c: 'SA56' }
+            console.log( 'account result is ', accresult ); //  {Id: '0010I00001p579fQAA', Type1__c: 'SA55', Type2__c: 'SA56', uniqueid: 'accoubt-id-1'}
         })
         .catch( (error)=>{
             console.log( 'Error is====>' , error );
@@ -62,6 +62,7 @@ export default class AccountDatas extends LightningElement {
      }
 }
 // Scenario 3: so here the new uniqueid properties added to the accresult, but not modifying the result variable, which is correct
+// use of Object.assign({}, item )
 
 export default class AccountDatas extends LightningElement {
     displayMessahe = true ;
@@ -76,13 +77,11 @@ export default class AccountDatas extends LightningElement {
             let accresult = result.map( item=>{
                 let eachobj = Object.assign( {}, item );
                 eachobj.uniqueid = 'accoubt-id-1';
-
-                console.log( 'eachobj is ', eachobj );
                 return eachobj ;
             });
 
-            console.log( 'result is ', result );
-            console.log( 'account result is ', accresult );
+            console.log( 'result is ', result ); //  {Id: '0010I00001p579fQAA', Type1__c: 'SA55', Type2__c: 'SA56' }
+            console.log( 'account result is ', accresult ); //  {Id: '0010I00001p579fQAA', Type1__c: 'SA55', Type2__c: 'SA56', uniqueid: 'accoubt-id-1'}
         })
         .catch( (error)=>{
             console.log( 'Error is====>' , error );
@@ -90,10 +89,3 @@ export default class AccountDatas extends LightningElement {
 
      }
 }
-
-
-
-let newobjlist = {...oldobjlist};
-console.log( oldobjlist );
-
-console.log( newobjlist );
