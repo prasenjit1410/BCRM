@@ -1,3 +1,39 @@
+/*
+  This First example (Scenario 1 ) depicts the how using filter method does not help to keep untouch the original array, if any modification done on the outcome/result
+*/
+
+import { LightningElement, track, api, wire } from 'lwc';
+import getAccountdatas from '@salesforce/apex/AccountDatas.getAccountdatas';
+
+// Scenario 1:  so here the new uniqueid properties added to the result, which is incorrect  
+export default class AccountDatas extends LightningElement {
+    displayMessahe = true ;
+    richTextMessage = '<h2> Welcome, currently Account datas not displaying on the screen, ' + 
+     'but in console log, you can find all data, this page is built for a research purpose </h2>';
+
+     connectedCallback(){
+        getAccountdatas()
+        .then( (result)=>{
+            console.log( 'response is ' , result );
+
+            let accresult = result.filter( item=>{
+                let eachobj = item;
+                eachobj.uniqueid = 'accoubt-id-1';
+                return eachobj ;
+            });
+
+            console.log( 'result is ', result ); //  {Id: '0010I00001p579fQAA', Type1__c: 'SA55', Type2__c: 'SA56', uniqueid: 'accoubt-id-1'}
+            console.log( 'account result is ', accresult ); //  {Id: '0010I00001p579fQAA', Type1__c: 'SA55', Type2__c: 'SA56', uniqueid: 'accoubt-id-1'}
+        })
+        .catch( (error)=>{
+            console.log( 'Error is====>' , error );
+        })
+
+     }
+}
+
+
+
 let newobjlist = {...oldobjlist};
 console.log( oldobjlist );
 
