@@ -1,0 +1,16 @@
+MetadataService.MetadataPort service = new MetadataService.MetadataPort();
+service.SessionHeader = new MetadataService.SessionHeader_element();
+service.SessionHeader.sessionId = UserInfo.getSessionId();
+
+MetadataService.Profile  profileapi = new MetadataService.Profile();
+profileapi.custom = false;
+profileapi.fullName = 'Admin';  // for System Admin profile, please use 'Admin' only
+MetadataService.ProfileFieldLevelSecurity fieldPermission;
+
+fieldPermission = new MetadataService.ProfileFieldLevelSecurity();
+fieldPermission.editable = true;
+fieldPermission.field = 'Account.Primary_Territory__c';
+
+profileapi.fieldPermissions = new MetadataService.ProfileFieldLevelSecurity[] {fieldPermission} ;
+
+MetadataService.SaveResult result = service.updateMetadata( new MetadataService.Metadata[] { profileapi })[0];	
