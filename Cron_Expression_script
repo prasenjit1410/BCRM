@@ -1,5 +1,3 @@
-String cronExpression =  sysTime.second() + ' ' + sysTime.minute() + ' ' + 
-                sysTime.hour() + ' ' + sysTime.day() + ' ' + sysTime.month() + ' ? ' ;
 Datetime sysTime = System.now();
 String hour = String.valueOf(Datetime.now().hour());
 String min = String.valueOf(Datetime.now().minute() + 1 ); 
