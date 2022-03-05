@@ -12,12 +12,12 @@
  * 
  ********************************************************/
 
-trigger ContentDocumentLinkTrigger on Attachment (after insert) {
+trigger ContentDocumentLinkTrigger on ContentDocumentLink (after insert) {
     
     
     if(Trigger.isAfter){
         
-        List<Attachment> attachmentList = new List<Attachment>();
+        List<ContentDocumentLink> attachmentList = new List<ContentDocumentLink>();
         attachmentList = Trigger.Isinsert || Trigger.isUndelete ? Trigger.New : Trigger.old;
         
         String operationtype = Trigger.Isinsert ? 'insert' : '';
