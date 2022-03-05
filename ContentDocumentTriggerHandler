@@ -13,7 +13,7 @@
 ********************************************************/
 public without sharing class ContentDocumentTriggerHandler {
     
-    public static void calculateAttachmentRollup(List<Attachment> deleteDocumentList, String operationType){
+    public static void calculateAttachmentRollup(List<ContentDocument> deleteDocumentList, String operationType){
         
         
         Map<String, String> AccountobjectFieldMap = new Map<String, String>();
