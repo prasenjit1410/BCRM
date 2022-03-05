@@ -24,7 +24,7 @@ trigger ContentDocumentTrigger on ContentDocument (before update) {
         operationtype = Trigger.isUpdate && String.isBlank(operationtype) ? 'update' : operationtype;
         operationtype = Trigger.isDelete && String.isBlank(operationtype) ? 'delete' : operationtype;
         operationtype = Trigger.isUnDelete && String.isBlank(operationtype) ? 'undelete' : operationtype;
-        AttachmentTriggerHandler.calculateAttachmentRollup(attachmentList, operationtype );
+        ContentDocumentTriggerHandler.calculateAttachmentRollup(attachmentList, operationtype );
     }
     
 }
