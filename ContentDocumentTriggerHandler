@@ -1,0 +1,128 @@
+/*********************************************************
+* Trigger Name : ContentDocumentTriggerHandler
+* Usage        : 
+* Author       : 
+* Created On   : 
+* -------------------------------------------------------
+* Modification History
+* -------------------------------------------------------
+* CR#   | DevName   |   Date        |   Comments
+* -------------------------------------------------------
+* 
+*
+********************************************************/
+public without sharing class ContentDocumentTriggerHandler {
+    
+    public static void calculateAttachmentRollup(List<Attachment> deleteDocumentList, String operationType){
+        
+        
+        Map<String, String> AccountobjectFieldMap = new Map<String, String>();
+        Map<Id, Integer> AccountobjectIdAttachmentCountMap = new Map<Id, Integer>();
+		
+        
+        
+        
+        Map<Id, Sobject> Account_recordsToUpdate = new Map<Id, Sobject> ();
+        Map<Id, Sobject> Account_zeroattachment = new Map<Id, Sobject> ();
+        Map<Id, Integer> Account_attachmentcount = new Map<Id, Integer> ();
+		Map<Id, Sobject> Account_attachmentCountToUpdate = new Map<Id, Sobject> ();   
+        Set<Id> AccountIds = new Set<Id>();
+		
+        AccountobjectFieldMap.put('Account', 'Attachment_Count__c');        
+
+		List<ContentDocumentLink> attachmentList = new List<ContentDocumentLink>();
+		List<Id> parentcversionids = new List<Id>();
+		for( ContentDocument cdoc : deleteDocumentList ){
+			parentcversionids.add( cdoc.Id );
+		}
+		
+		
+		attachmentList = [ select Id, LinkedEntityId from ContentDocumentLink 
+							where ContentDocumentId IN:parentcversionids ];
+							
+        if( operationType == 'delete' ){
+			for(ContentDocumentLink attachmentRecord : attachmentList){
+				if(String.isNotBlank(attachmentRecord.LinkedEntityId)){
+					String objectName = attachmentRecord.LinkedEntityId.getSObjectType().getDescribe().getName();
+                    if(AccountobjectFieldMap.keySet().contains(objectName)){
+						SObject s = attachmentRecord.LinkedEntityId.getSObjectType().newSObject(attachmentRecord.LinkedEntityId);
+						Account_recordsToUpdate.put(attachmentRecord.LinkedEntityId, s);
+					}					
+				}
+			}
+			
+			
+
+			
+            List<AggregateResult> trustreviewaggResult = new List<AggregateResult>();
+			List<AggregateResult> trustreviewFileaggResult = new List<AggregateResult>();
+			if( Account_recordsToUpdate.keyset().size() > 0 ){
+				trustreviewaggResult = [Select count(id) , ParentId From Attachment 
+										Where ParentId IN : Account_recordsToUpdate.KeySet() 
+										Group By ParentId];
+				trustreviewFileaggResult = [Select count(id) , LinkedEntityId From ContentDocumentLink 
+											Where LinkedEntityId IN : Account_recordsToUpdate.KeySet() 
+											Group By LinkedEntityId];
+				if( trustreviewaggResult.isEmpty() && trustreviewFileaggResult.isEmpty() ){
+					for( Id trid :  Account_recordsToUpdate.keySet()  ){
+						AccountobjectIdAttachmentCountMap.put( trid, 0 );
+					}
+				}else{					
+					for(AggregateResult ar : trustreviewaggResult){
+						Id parentId = (ID)ar.get('ParentId');
+						Integer attachmentcount = (Integer)ar.get('expr0')  ;
+						AccountobjectIdAttachmentCountMap.put( parentId, attachmentcount );
+					}
+					for(AggregateResult ar : trustreviewFileaggResult){
+						Id parentId = (ID)ar.get('LinkedEntityId');
+						Integer attachmentcount = (Integer)ar.get('expr0')  ;						
+						if(AccountobjectIdAttachmentCountMap.containsKey(parentId) ){
+							attachmentcount += AccountobjectIdAttachmentCountMap.get(parentId) ;							
+						}						
+						AccountobjectIdAttachmentCountMap.put( parentId, attachmentcount );
+					}
+				}
+				
+			}
+			
+			// populate Attachment count while delete
+            if( operationType == 'delete' && Account_recordsToUpdate.keyset().size() > 0  ){                
+                // AccountobjectIdAttachmentCountMap.get(objid) == 0 , means no attachment
+				// AccountobjectIdAttachmentCountMap.get(objid) > 0 , means attachment exists
+				if(Account_recordsToUpdate.keySet().size() > 0){					
+					for( Id objid : Account_recordsToUpdate.keySet() ){						
+						if( AccountobjectIdAttachmentCountMap.containsKey( objid ) && AccountobjectIdAttachmentCountMap.get(objid) == 0 ){ // Attachment_is_zero
+							Integer atrcount = AccountobjectIdAttachmentCountMap.get( objid );
+							String objectName = objid.getSObjectType().getDescribe().getName();
+							Account_recordsToUpdate.get(objid).put( AccountobjectFieldMap.get(objectName), atrcount );
+							Account_attachmentcount.put(objid, 0 );
+						}else if(  AccountobjectIdAttachmentCountMap.containsKey( objid ) && AccountobjectIdAttachmentCountMap.get(objid) > 0 ){ // Attachment is greater than zero
+							Integer atrcount = AccountobjectIdAttachmentCountMap.get( objid );
+							String objectName = objid.getSObjectType().getDescribe().getName();
+							SObject s = objid.getSObjectType().newSObject(objid);
+							Account_attachmentCountToUpdate.put( objid , s );
+							Account_attachmentCountToUpdate.get(objid).put( AccountobjectFieldMap.get(objectName), atrcount );							
+						}							
+					}
+					// if no attachment is there, then update Attachment count
+					if( Account_attachmentcount.keySet().size() > 0 ){
+						for( Id trid : Account_recordsToUpdate.keySet() ){
+							if( Account_attachmentcount.containsKey( trid ) ){
+								Account_zeroattachment.put( trid, Account_recordsToUpdate.get(trid) );
+							}
+						}
+						if( Account_zeroattachment.keySet().size() > 0 ){
+							update Account_zeroattachment.values();
+						}
+					}
+					
+					
+					// if attachment is there then increase Attachment count
+					if( Account_attachmentCountToUpdate.keySet().size() > 0 ){
+						update Account_attachmentCountToUpdate.values() ;
+					}
+				}
+            }
+        }       
+    }
+}
