@@ -1,0 +1,30 @@
+/*********************************************************
+ * Trigger Name : AttachmentTrigger
+ * Usage        : Handle Trigger Events
+ * Author       : 
+ * Created On   : 
+ * -------------------------------------------------------
+ * Modification History
+ * -------------------------------------------------------
+ * CR#   |DevName   |   Date        |   Comments
+ * -------------------------------------------------------
+ *  
+ * 
+ ********************************************************/
+
+trigger AttachmentTrigger on Attachment (after insert, after update, after delete, after undelete) {
+    
+    
+    if(Trigger.isAfter){
+        
+        List<Attachment> attachmentList = new List<Attachment>();
+        attachmentList = Trigger.Isinsert || Trigger.isUndelete ? Trigger.New : Trigger.old;
+        
+        String operationtype = Trigger.Isinsert ? 'insert' : '';
+        operationtype = Trigger.isUpdate && String.isBlank(operationtype) ? 'update' : operationtype;
+        operationtype = Trigger.isDelete && String.isBlank(operationtype) ? 'delete' : operationtype;
+        operationtype = Trigger.isUnDelete && String.isBlank(operationtype) ? 'undelete' : operationtype;
+        AttachmentTriggerHandler.calculateAttachmentRollup(attachmentList, operationtype );
+    }
+    
+}
