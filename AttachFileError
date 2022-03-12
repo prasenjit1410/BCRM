@@ -1,2 +1,50 @@
 To understand this issue, let take an scenario.
-for example
+
+cosider scenario 1: User2 trying attach file on ACC-2 and other child objects
+                OWD                           Profile Access    
+Account         Private                         Read
+Affiliation     controlled by parent            Read  Create
+Territory       controlled by parent            Read  Create
+
+Consider two users:  User1  ,   User2
+Account Records: ACC-1,  ACC-2
+
+                Owner
+ACC-1           User1
+ACC-2           User2
+
+Now, User2 owns ACC-2, so to attach file from Attachment related list needs minimum Read access on Account, it means User2 can attach file on ACC-2 but User2 cannot add attach file on other two child objects ( Affiliation and Territory )
+, so to attach file on other objects User2 need Read, Create and Edit access
+
+
+cosider scenario 2: User2 trying attach file on ACC-1 and other child objects
+                OWD                           Profile Access    
+Account         Private                         Read
+Affiliation     controlled by parent            Read  Create Edit
+Territory       controlled by parent            Read  Create Edit
+
+Consider two users:  User1  ,   User2
+Account Records: ACC-1,  ACC-2
+
+                Owner
+ACC-1           User1
+ACC-2           User2
+
+Now, User2 get Read Access only on ACC-1, but User2 cannot attach file on ACC-1, in this case User2 required Read/Write share access on ACC-1, and he cannot add attach file on other two child objects ( Affiliation and Territory ) as well despite of having Read Create Edit access on child objects
+
+
+cosider scenario 3: User2 trying attach file on ACC-1 and other child objects
+                OWD                           Profile Access    
+Account         Private                         Read
+Affiliation     controlled by parent            Read  Create
+Territory       controlled by parent            Read  Create
+
+Consider two users:  User1  ,   User2
+Account Records: ACC-1,  ACC-2
+
+                Owner
+ACC-1           User1
+ACC-2           User2
+
+Now, User2 get Read/Write Access only on ACC-1, now User2 can attach file on ACC-1, but User2 cannot attach file on other two child objects ( Affiliation and Territory ) . In this case only Read and Create access on child objects is not sufficient, so User2 required Read Create and Edit access on child objects 
+
