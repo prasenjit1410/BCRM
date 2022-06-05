@@ -1,0 +1,35 @@
+// UtilityConstants
+import { LightningElement, track, api } from 'lwc';
+
+export default class UtilityConstants extends LightningElement {
+    @api CONSTANT_FIELDS ={
+        supportivedocuments : 'Aadhar card'
+    }
+}
+
+// Utility
+import { LightningElement, track, api } from 'lwc';
+import { NavigationMixin } from 'lightning/navigation';
+import utilityconstant from 'c/utilityConstants' ;
+
+export default class UtilityJS extends utilityconstant {
+    constructor(){
+        super();
+    }
+    
+    @api validationInput(){
+
+    }
+}
+
+// Your component [ here the component name is <AccessParentVariables> ]
+import { LightningElement } from 'lwc';
+import { NavigationMixin } from 'lightning/navigation';
+import utilityJS from 'c/utilityJS' ;
+
+export default class PocAccessingVariables extends NavigationMixin(utilityJS) {
+    connectedCallback(){
+       console.log( 'log#2::supportivedocuments >>' + this.CONSTANT_FIELDS.supportivedocuments);
+    }
+}
+
